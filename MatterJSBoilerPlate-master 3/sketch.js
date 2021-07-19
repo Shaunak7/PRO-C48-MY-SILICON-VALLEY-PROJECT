@@ -6,6 +6,7 @@ var score=0;
 var bg;
 var health=100;
 var character;
+var stone=0;
 
 localStorage["HighestScore"] = 0;
 
@@ -19,7 +20,7 @@ function preload()
 	bgImage1=loadImage("images/bg1.png")
 	bgImage2=loadImage("images/bg2.png")
   bgImage3=loadImage("images/bg3.jpg")
-
+  bgImage4=loadImage("images/bg01.gif")
 	ironManFlyingImage=loadAnimation("images/IRONMAN/IronManFlying1.gif")
   superManFlyingImage=loadAnimation("images/SUPERMAN/SuperManFlying.gif")
 
@@ -52,7 +53,7 @@ function preload()
 
   healthbarImage=loadImage("images/HealthBar.png")
 
-  starscoreImage=loadImage("StarScore.png")
+  starscoreImage=loadImage("images/StarScore.png")
 }
 
 function setup() {
@@ -62,7 +63,7 @@ function setup() {
 	world = engine.world;
 
   bg=createSprite(750,400,1000,2000)
-  bg.addImage(bgImage1);
+  bg.addImage(bgImage4);
   bg.visible=false;
  // bg.velocityY=2
 
@@ -72,11 +73,11 @@ function setup() {
 	ironManFlying.scale = 0.4;
   ironManFlying.visible=false;
 
-  Thanos = createSprite(displayWidth/2,displayHeight+250,20,50);
-  Thanos.addAnimation("ThanosImage",ThanosImage)
-  Thanos.addAnimation("CatWomanImage",CatWomanImage)
-	Thanos.scale = 0.4;
-  Thanos.visible=false;
+  Enemy = createSprite(displayWidth/2,displayHeight+250,20,50);
+  Enemy.addAnimation("ThanosImage",ThanosImage)
+  Enemy.addAnimation("CatWomanImage",CatWomanImage)
+	Enemy.scale = 0.4;
+  Enemy.visible=false;
 
   healthBar=createSprite(200,700,50,50)
   healthBar.addImage(healthbarImage)
@@ -140,7 +141,7 @@ function draw() {
 
   if(bg.y>displayHeight/2){
 
-    bg.y=displayHeight/2
+    bg.y=bg.height/2
   }
 
   if(gameState === START){
@@ -176,8 +177,8 @@ function draw() {
   }
 if (gameState===PLAY){
 
-  bg.velocityY=2;
-  
+  //bg.velocityY=2;
+  bg.scale=5
   if(bg.y>displayHeight/2){
   
   bg.y=350
@@ -199,31 +200,43 @@ if(character===1){
   if(score===2000){
     Stone.visible=true;
     Stone.velocityY=2
+    stone.scale=0.5
     Stone.addImage(PowerStoneImage)
+    Stone.scale=0.1
   }
 
   if(score===3000){
     Stone.visible=true;
     Stone.velocityY=2
     Stone.addImage(RealityStoneImage)
+    Stone.scale=0.1
   }
 
   if(score===4000){
     Stone.visible=true;
     Stone.velocityY=2
     Stone.addImage(SoulStoneImage)
+    Stone.scale=0.1
   }
 
   if(score===5000){
     Stone.visible=true;
     Stone.velocityY=2
     Stone.addImage(SpaceStoneImage)
+    Stone.scale=0.1
   }
   
   if(score===6000){
     Stone.visible=true;
     Stone.velocityY=2
     Stone.addImage(TimeStoneImage)
+    Stone.scale=0.1
+  }
+
+  if(score===7000){
+    Enemy.visible=true;
+    Enemy.addImage(ThanosImage)
+
   }
 
 }
@@ -235,27 +248,38 @@ if(character===2){
   if(score===1000){
     Stone.visible=true;
     Stone.velocityY=2
+    Stone.scale=0.1
   }
 
   if(score===2000){
     Stone.visible=true;
     Stone.velocityY=2
+    Stone.scale=0.1
   }
   if(score===3000){
     Stone.visible=true;
     Stone.velocityY=2
+    Stone.scale=0.1
   }
   if(score===4000){
     Stone.visible=true;
     Stone.velocityY=2
+    Stone.scale=0.1
   }
   if(score===5000){
     Stone.visible=true;
     Stone.velocityY=2
+    Stone.scale=0.1
   }
   if(score===6000){
     Stone.visible=true;
     Stone.velocityY=2
+    Stone.scale=0.1
+  }
+
+  if(score===7000){
+    Enemy.visible=true;
+    Enemy.addImage(CatWomanImage)
   }
 
 }
@@ -263,7 +287,9 @@ if(character===2){
 
 
   spawnRobots();
-
+edges=createEdgeSprites();
+ironManFlying.collide(edges[0])
+ironManFlying.collide(edges[1])
   if(keyDown("LEFT")){
     ironManFlying.x=ironManFlying.x-10
   }
@@ -271,6 +297,7 @@ if(character===2){
   if(keyDown("RIGHT")){
     ironManFlying.x=ironManFlying.x+10
   }
+
 for (var i=0;i<robotGroup.length;i++){
 
   if(robotGroup.get(i).isTouching(ironManFlying)){
@@ -279,9 +306,15 @@ for (var i=0;i<robotGroup.length;i++){
     }
 
 }
-  
 
- 
+if(character1.isTouching(Stone)){
+stone=stone+1
+}
+
+if(character2.isTouching(Stone)){
+  stone=stone+1
+  }
+  
 }
   drawSprites();
 
@@ -289,14 +322,14 @@ for (var i=0;i<robotGroup.length;i++){
   textSize(20)
   text(health,170,710)
 
-  text(score,1300,710)
+  text(score,1290,710)
 
   text(mouseX+","+mouseY,mouseX,mouseY)
 }
 
 function spawnRobots() {
-  if(frameCount % 160 === 0) {
-    var robot = createSprite(random(displayWidth/2-200,displayWidth+200),-100,10,40);
+  if(frameCount % 260 === 0) {
+    var robot = createSprite(random(200,displayWidth-200),-100,10,40);
     robot.velocityY = 2;
     robot.addAnimation("robot1Image",robot1Image)
     robot.addAnimation("robot2Image",robot2Image)
